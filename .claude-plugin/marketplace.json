@@ -1,5 +1,8 @@
 {
   "name": "fable-advisor",
+  "metadata": {
+    "description": "Model-routing patterns for Claude Code: architect-as-orchestrator with Sonnet/Opus/GPT-5.5 implementation lanes and a Fable 5 commitment-boundary advisor."
+  },
   "owner": {
     "name": "Dan McAteer",
     "url": "https://github.com/DannyMac180"
@@ -8,7 +11,7 @@
     {
       "name": "fable-advisor",
       "source": "./",
-      "description": "Consult Claude's most capable model at commitment boundaries while a cheap model does the work."
+      "description": "Architect-as-orchestrator: your session runs Claude's most capable model, routing implementation to Sonnet, Opus, and GPT-5.5 (codex) lanes — with a commitment-boundary advisor."
     }
   ]
 }

@@ -1,12 +1,12 @@
 {
   "name": "fable-advisor",
-  "version": "1.0.0",
-  "description": "Consult Claude's most capable model at commitment boundaries while a cheap model does the work. Fable-level judgment, Sonnet-level bills.",
+  "version": "2.0.0",
+  "description": "Run your session on Claude's most capable model as a full-time architect: it writes specs and verdicts while Sonnet, Opus, and GPT-5.5 (via codex) lanes do the typing. Fable-level judgment, Sonnet-level bills.",
   "author": {
     "name": "Dan McAteer",
     "url": "https://github.com/DannyMac180"
   },
   "homepage": "https://github.com/DannyMac180/fable-advisor",
   "license": "MIT",
-  "keywords": ["agents", "model-routing", "fable", "advisor", "orchestration"]
+  "keywords": ["agents", "model-routing", "fable", "advisor", "orchestration", "architect", "codex"]
 }
