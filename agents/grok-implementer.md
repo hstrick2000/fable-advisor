@@ -51,6 +51,8 @@ SPEC_EOF
 
 **File mutations: native write/edit tool ONLY.** State this in every spec: "Perform all file changes with your file write/edit tools. Never modify files via shell redirection (`>`, `>>`, `tee`, `sed -i`) — the headless resolver silently cancels file-mutating shell commands (exit 0, no diff) regardless of `--allow` flags. Shell is for read-only commands only."
 
+**Grok never commits.** Do not include `git add`/`git commit` (or any DB-mutating psql) in the spec's task steps — mutating shell commands are resolver-cancelled and the run stalls at that step. Grok's job ends at edited files plus read-only verification; YOU (the supervising agent) stage, commit, and run any mutating verification commands yourself after independently reviewing the diff.
+
 2. Invoke grok through the shared lane script. Repository-local documentation does not establish `CLAUDE_PLUGIN_ROOT` for agents, so resolve the newest installed plugin cache and run the script from there:
 
 ```bash
