@@ -49,22 +49,14 @@ and include its actual output in your final message."]
 SPEC_EOF
 ```
 
-2. Invoke grok headlessly, scoped to the working tree:
+2. Invoke grok through the shared lane script. Repository-local documentation does not establish `CLAUDE_PLUGIN_ROOT` for agents, so resolve the newest installed plugin cache and run the script from there:
 
 ```bash
-# Portable timeout: macOS has no `timeout` unless coreutils is installed
-T=$(command -v gtimeout || command -v timeout || true)
-[ -z "$T" ] && echo "WARN: no timeout binary — grok runs uncapped (brew install coreutils to cap)"
-
-${T:+$T 600} grok --prompt-file "$SPEC" \
-  -m grok-4.5 \
-  --permission-mode acceptEdits \
-  --allow 'Bash(*)' \
-  --output-format plain \
-  --cwd "$(pwd)" \
-  > /tmp/grok-final-$$.txt 2>&1
-FINAL=/tmp/grok-final-$$.txt
+LANE=$(ls -d ~/.claude/plugins/cache/fable-advisor/fable-advisor/*/bin | sort -V | tail -1)
+"$LANE/run-grok-lane.sh" "$SPEC"
 ```
+
+The script is the single source of truth for the invocation flags and prints the model output followed by a deterministic DISK STAMP. Preserve that stamp for the report.
 
 Flag discipline (non-negotiable):
 
@@ -72,15 +64,15 @@ Flag discipline (non-negotiable):
 |---|---|
 | `--prompt-file "$SPEC"` | Headless single-task run from a file. No quoting hazards, no truncated specs. |
 | `-m grok-4.5` | The lane's producer is Grok 4.5, pinned explicitly — never rely on the CLI default. |
-| `--permission-mode acceptEdits` | Grok edits files without prompting. Never `--always-approve` — you re-run verification yourself. |
+| `--permission-mode acceptEdits` | Grok edits files without prompting, without granting blanket command approval. You re-run verification yourself. |
 | `--allow 'Bash(*)'` | Required for headless runs. The Grok CLI merges the caller's global `~/.claude/settings.json` permission rules into its own resolver, and under that merge terminal-command execution defaults to "ask" — which with no human present silently cancels the turn (exit 0, no diff, no error) instead of failing loudly. The scoped allow approves shell execution only; it is not blanket auto-approval. |
 | `--cwd "$(pwd)"` | Deterministic working root. |
 | `--output-format plain` | Final message to stdout, captured for the report. |
 | `${T:+$T 600}` | Ten-minute wall clock when `timeout`/`gtimeout` exists. On timeout, report `STATUS: timeout` with whatever landed. |
 
-`-m grok-4.5` is the current top Grok tier — if the caller's spec names a different grok model, use that instead; the slug is a documented default, not a constant.
+`-m grok-4.5` is the current pinned Grok tier in the shared script.
 
-3. **Verify independently.** Read the diff (`git diff` / `git status`), run the spec's verification command yourself, and read grok's final message from `"$FINAL"`. Grok's claim of success is not evidence; your re-run is.
+3. **Verify independently.** Read the diff (`git diff` / `git status`), run the spec's verification command yourself, and read grok's final message and DISK STAMP from the shared script output. Grok's claim of success is not evidence; your re-run is.
 
 ## What you return
 
@@ -89,6 +81,7 @@ GROK REPORT
 STATUS: complete | partial | timeout | unavailable
 OBJECTIVE: [restated in one line]
 CHANGES: [file — one-line summary, per file, from the actual diff]
+DISK STAMP: [paste the === DISK STAMP === block verbatim — never retype or summarize it]
 VERIFIED: [verification command you re-ran — actual output evidence]
 GROK SAID: [one-line summary of grok's final message, note any disagreement with the diff]
 GAPS: [spec ambiguities, unfinished items, or "none"]
@@ -98,5 +91,6 @@ GAPS: [spec ambiguities, unfinished items, or "none"]
 
 - One grok invocation per task unless the caller explicitly decomposed it.
 - Never claim completion without re-running the verification yourself. "Grok said it works" is forbidden as evidence.
+- If the spec was a change task and the DISK STAMP's `changed_vs_pre` reads `NONE`, `STATUS` must not be `complete`; report `partial` and cite the stamp as evidence of a silent cancellation or no-op run.
 - If grok's changes are wrong, report that plainly with the failing output — do not patch them yourself. Fix decisions belong to the caller.
 - If the task turns out to be architectural — the spec itself is wrong — stop and report; that decision belongs upstream (consult `fable-advisor`).

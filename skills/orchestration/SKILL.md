@@ -61,4 +61,4 @@ Pass it the decision, the constraints, and the options considered. Act on the ve
 
 ## Verification
 
-Reports are claims, not evidence. Before accepting any lane's work: read the diff, and re-run the verification command (or spot-check its quoted output against the working tree). "Should work", "tests should pass", or a report with no command output means the task is not done. A lane that reports a spec gap gets a corrected spec, not a "use your judgment".
+Reports are claims, not evidence. Before accepting any lane's work: read the diff, and re-run the verification command (or spot-check its quoted output against the working tree). The architect must reject any lane report that is missing the DISK STAMP block, or whose stamp shows `changed_vs_pre = NONE` on a task that was supposed to change something, regardless of what the report's prose claims. "Should work", "tests should pass", or a report with no command output means the task is not done. A lane that reports a spec gap gets a corrected spec, not a "use your judgment".
