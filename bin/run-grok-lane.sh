@@ -47,8 +47,8 @@ else
   PRE_IS_GIT=0
 fi
 
-if [[ -x /Users/haydenstrickland/.grok/bin/grok ]]; then
-  GROK_BIN=/Users/haydenstrickland/.grok/bin/grok
+if [[ -x "$HOME/.grok/bin/grok" ]]; then
+  GROK_BIN="$HOME/.grok/bin/grok"
 else
   GROK_BIN=$(command -v grok || true)
 fi
@@ -56,7 +56,7 @@ fi
 TIMEOUT_BIN=$(command -v gtimeout || command -v timeout || true)
 
 if [[ -z $GROK_BIN ]]; then
-  printf 'ERROR: grok was not found at /Users/haydenstrickland/.grok/bin/grok or on PATH\n' > "$OUTPUT_FILE"
+  printf 'ERROR: grok was not found at %s/.grok/bin/grok or on PATH\n' "$HOME" > "$OUTPUT_FILE"
   CLI_EXIT=127
 else
   GROK_COMMAND=(
