@@ -64,7 +64,7 @@ Flag discipline (non-negotiable):
 |---|---|
 | `--prompt-file "$SPEC"` | Headless single-task run from a file. No quoting hazards, no truncated specs. |
 | `-m grok-4.5` | The lane's producer is Grok 4.5, pinned explicitly — never rely on the CLI default. |
-| `--permission-mode acceptEdits` | Grok edits files without prompting, without granting blanket command approval. You re-run verification yourself. |
+| `--permission-mode acceptEdits` | Grok edits files without prompting, without granting blanket command approval. Never `--always-approve` — you re-run verification yourself. |
 | `--allow 'Bash(*)'` | Required for headless runs. The Grok CLI merges the caller's global `~/.claude/settings.json` permission rules into its own resolver, and under that merge terminal-command execution defaults to "ask" — which with no human present silently cancels the turn (exit 0, no diff, no error) instead of failing loudly. The scoped allow approves shell execution only; it is not blanket auto-approval. |
 | `--cwd "$(pwd)"` | Deterministic working root. |
 | `--output-format plain` | Final message to stdout, captured for the report. |
