@@ -49,6 +49,8 @@ and include its actual output in your final message."]
 SPEC_EOF
 ```
 
+**File mutations: native write/edit tool ONLY.** State this in every spec: "Perform all file changes with your file write/edit tools. Never modify files via shell redirection (`>`, `>>`, `tee`, `sed -i`) — the headless resolver silently cancels file-mutating shell commands (exit 0, no diff) regardless of `--allow` flags. Shell is for read-only commands only."
+
 2. Invoke grok through the shared lane script. Repository-local documentation does not establish `CLAUDE_PLUGIN_ROOT` for agents, so resolve the newest installed plugin cache and run the script from there:
 
 ```bash
@@ -65,7 +67,7 @@ Flag discipline (non-negotiable):
 | `--prompt-file "$SPEC"` | Headless single-task run from a file. No quoting hazards, no truncated specs. |
 | `-m grok-4.5` | The lane's producer is Grok 4.5, pinned explicitly — never rely on the CLI default. |
 | `--permission-mode acceptEdits` | Grok edits files without prompting, without granting blanket command approval. Never `--always-approve` — you re-run verification yourself. |
-| `--allow 'Bash(*)'` | Required for headless runs. The Grok CLI merges the caller's global `~/.claude/settings.json` permission rules into its own resolver, and under that merge terminal-command execution defaults to "ask" — which with no human present silently cancels the turn (exit 0, no diff, no error) instead of failing loudly. The scoped allow approves shell execution only; it is not blanket auto-approval. |
+| `--allow 'Bash(*)'` | Required for headless runs. The Grok CLI merges the caller's global `~/.claude/settings.json` permission rules into its own resolver, and under that merge terminal-command execution defaults to "ask" — which with no human present silently cancels the turn (exit 0, no diff, no error) instead of failing loudly. The scoped allow approves shell execution only; it is not blanket auto-approval. Covers read-only shell only — file-MUTATING shell commands are cancelled regardless; hence the native-tool rule above. |
 | `--cwd "$(pwd)"` | Deterministic working root. |
 | `--output-format plain` | Final message to stdout, captured for the report. |
 | `${T:+$T 600}` | Ten-minute wall clock when `timeout`/`gtimeout` exists. On timeout, report `STATUS: timeout` with whatever landed. |
